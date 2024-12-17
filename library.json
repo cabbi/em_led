@@ -1,0 +1,20 @@
+{
+  "name": "EmLed",
+  "version": "1.0.0",
+  "description": "Embedded Led with state handling",
+  "keywords": ["led", "blink", "gpio"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cabbi/em_led.git"
+  },
+  "authors": {
+    "name": "Fabio Cabella",
+    "maintainer": true
+  },
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "cabbi/EmCore": "~1.0.6"
+  },  
+  "frameworks": ["arduino"],
+  "platforms": "*"
+}
