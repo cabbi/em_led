@@ -10,22 +10,22 @@
 // Abstract led state class 
 class EmLedState {
 public:
-    virtual bool IsOn() = 0;
-    virtual void Reset() = 0;
+    virtual bool isOn() = 0;
+    virtual void reset() = 0;
 };
 
 // Led ON fixed state 
 class EmLedOnState: public EmLedState {
 public:
-    virtual bool IsOn() override { return true; }
-    virtual void Reset() override {};
+    virtual bool isOn() override { return true; }
+    virtual void reset() override {};
 };
 
 // Led OFF fixed state 
 class EmLedOffState: public EmLedState {
 public:
-    virtual bool IsOn() override { return false; }
-    virtual void Reset() override {};
+    virtual bool isOn() override { return false; }
+    virtual void reset() override {};
 };
 
 
@@ -33,21 +33,21 @@ public:
 class EmLedSimpleBlinker: public EmLedState {
 public:
     EmLedSimpleBlinker(uint32_t blinkDurationMs, bool startAsOn=true)
-     : m_BlinkingTimeout(blinkDurationMs, false),
-       m_StartAsOn(startAsOn),
-       m_IsOn(startAsOn) {}
+     : m_blinkingTimeout(blinkDurationMs, false),
+       m_startAsOn(startAsOn),
+       m_isOn(startAsOn) {}
     
-    virtual bool IsOn() override;
-    virtual void Reset() override;
+    virtual bool isOn() override;
+    virtual void reset() override;
 
-    void SetDuration(uint32_t millis);
+    void setDuration(uint32_t millis);
 
 protected:
-    bool _isElapsed();
+    bool isElapsed_();
     
-    EmTimeout m_BlinkingTimeout;
-    bool m_StartAsOn;
-    bool m_IsOn;
+    EmTimeout m_blinkingTimeout;
+    bool m_startAsOn;
+    bool m_isOn;
 };
 
 // Sequence led blinker
@@ -59,31 +59,31 @@ protected:
 //    EmLedSequenceBlinker goodStatusBlink(sequence, SIZE_OF(sequence), true);
 class EmLedSequenceBlinker: public EmLedSimpleBlinker {
 public:
-    EmLedSequenceBlinker(uint32_t sequenceMillis[], 
+    EmLedSequenceBlinker(const uint32_t sequenceMillis[], 
                          uint8_t sequenceLen,
                          bool startAsOn=true)
      : EmLedSimpleBlinker(sequenceMillis[0], startAsOn),
-       m_SequenceMillis(sequenceMillis),
-       m_SequenceLen(sequenceLen),
-       m_CurrentIndex(0) {}
+       m_sequenceMillis(sequenceMillis),
+       m_sequenceLen(sequenceLen),
+       m_currentIndex(0) {}
     
-    virtual bool IsOn() override;
-    virtual void Reset() override;
+    virtual bool isOn() override;
+    virtual void reset() override;
 
 protected:
-    void _incSequence();
+    void incSequence_();
 
 private:
-    uint32_t* m_SequenceMillis;
-    uint8_t m_SequenceLen;
-    uint8_t m_CurrentIndex;
+    const uint32_t* m_sequenceMillis;
+    uint8_t m_sequenceLen;
+    uint8_t m_currentIndex;
 };
 
 
 // The abstract led class.
 //
-// The real implementation of a led should override the 'Update' method 
-// by getting the 'IsOn()' state method.
+// The real implementation of a led should override the 'update' method 
+// by getting the 'isOn()' state method.
 //
 // The StateEnum values should be the index within the 'ledStates' array.
 // Led class implemented as template to reduce the RAM footprint.
@@ -118,28 +118,28 @@ template <class StateEnum, EmLedState* ledStates[]>
 class EmLed: public EmUpdatable {
 public:
     EmLed(StateEnum initialState)
-     : m_State(initialState) {}
+     : m_state(initialState) {}
 
     // Will get "lto1.exe: internal compiler error: Segmentation fault"
     // if not declaring this virtual abstract method :(
-    virtual void Update() = 0;  
+    virtual void update() = 0;  
 
     // Sets the led state and calls the 'Update' method if requested.
-    void SetState(StateEnum state, bool callUpdate=true) {
-        m_State = state;
-        ledStates[static_cast<size_t>(m_State)]->Reset();
+    void setState(StateEnum state, bool callUpdate=true) {
+        m_state = state;
+        ledStates[static_cast<size_t>(m_state)]->reset();
         if (callUpdate) {
-            Update();
+            update();
         }
     }
 
     // Gets the led state.
-    StateEnum GetState() const {
-        return m_State;
+    StateEnum getState() const {
+        return m_state;
     }
 
 protected:
-    StateEnum m_State;
+    StateEnum m_state;
 };
 
 // The hardware led using a GPIO pin as output.
@@ -148,20 +148,20 @@ class EmGpioLed: public EmLed<StateEnum, ledStates> {
 public:
     EmGpioLed(uint8_t ioPin, StateEnum initialState)
      : EmLed<StateEnum, ledStates>(initialState),
-       m_IoPin(ioPin) {
-        pinMode(m_IoPin, OUTPUT);
+       m_ioPin(ioPin) {
+        pinMode(m_ioPin, OUTPUT);
     }
 
     // Updates the led output port.
     //
     // This method might be called regularly within the main loop in case of
     // defined blinking states
-    virtual void Update() override {
-        digitalWrite(m_IoPin, ledStates[static_cast<uint8_t>(this->m_State)]->IsOn());
+    virtual void update() override {
+        digitalWrite(m_ioPin, ledStates[static_cast<uint8_t>(this->m_state)]->isOn());
     }
 
 protected:
-    uint8_t m_IoPin;
+    uint8_t m_ioPin;
 };
 
 #endif

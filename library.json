@@ -1,6 +1,6 @@
 {
   "name": "EmLed",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Embedded Led with state handling",
   "keywords": ["led", "blink", "gpio"],
   "repository": {
@@ -13,7 +13,7 @@
   },
   "license": "BSD-3-Clause",
   "dependencies": {
-    "cabbi/EmCore": "~1.0.6"
+    "cabbi/EmCore": "~2.0.0"
   },  
   "frameworks": ["arduino"],
   "platforms": "*"

@@ -35,13 +35,13 @@ EmUpdatable* leds[] = {&led1, &led2, &led3};
 EmUpdater<leds, SIZE_OF(leds)> updater;
 
 void setup() {
-    led1.SetState(MyLedState::on);
-    led2.SetState(MyLedState::bad_status_blink);
-    led3.SetState(MyLedState::good_status_blink);
+    led1.setState(MyLedState::on);
+    led2.setState(MyLedState::bad_status_blink);
+    led3.setState(MyLedState::good_status_blink);
 }
 
 
 void loop() {
     // Updates the led status (i.e. switched on or off)
-    updater.Update();
+    updater.update();
 }

@@ -1,52 +1,52 @@
 #include "em_led.h"
 
 
-bool EmLedSimpleBlinker::IsOn() 
+bool EmLedSimpleBlinker::isOn() 
 {
-    if (_isElapsed()) {
-        m_IsOn = !m_IsOn;
+    if (isElapsed_()) {
+        m_isOn = !m_isOn;
     }
-    return m_IsOn; 
+    return m_isOn; 
 }
 
-void EmLedSimpleBlinker::Reset() 
+void EmLedSimpleBlinker::reset() 
 {
-    m_IsOn = m_StartAsOn;
-    m_BlinkingTimeout.Restart();
+    m_isOn = m_startAsOn;
+    m_blinkingTimeout.restart();
 }
 
-void EmLedSimpleBlinker::SetDuration(uint32_t millis) 
+void EmLedSimpleBlinker::setDuration(uint32_t millis) 
 {
-    m_BlinkingTimeout.SetTimeout(millis, true);
+    m_blinkingTimeout.setTimeout(millis, true);
 }
 
-bool EmLedSimpleBlinker::_isElapsed()
+bool EmLedSimpleBlinker::isElapsed_()
 {
-    return m_BlinkingTimeout.IsElapsed(true);
+    return m_blinkingTimeout.isElapsed(true);
 }
-    
-bool EmLedSequenceBlinker::IsOn() 
+
+bool EmLedSequenceBlinker::isOn() 
 {
-    if (_isElapsed()) {
-        m_IsOn = !m_IsOn;
-        _incSequence();
+    if (isElapsed_()) {
+        m_isOn = !m_isOn;
+        incSequence_();
     }
-    return m_IsOn; 
+    return m_isOn; 
 }
 
-void EmLedSequenceBlinker::Reset() 
+void EmLedSequenceBlinker::reset() 
 {
-    m_CurrentIndex = m_SequenceLen;
-    _incSequence();
-    EmLedSimpleBlinker::Reset();
+    m_currentIndex = m_sequenceLen;
+    incSequence_();
+    EmLedSimpleBlinker::reset();
 }
 
-void EmLedSequenceBlinker::_incSequence() 
+void EmLedSequenceBlinker::incSequence_() 
 {
-    if (m_CurrentIndex < m_SequenceLen-1) {
-        m_CurrentIndex++;
+    if (m_currentIndex < m_sequenceLen-1) {
+        m_currentIndex++;
     } else {
-        m_CurrentIndex = 0;
+        m_currentIndex = 0;
     }
-    SetDuration(m_SequenceMillis[m_CurrentIndex]);
+    setDuration(m_sequenceMillis[m_currentIndex]);
 }
